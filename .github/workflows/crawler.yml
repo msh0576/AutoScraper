@@ -1,17 +1,14 @@
 name: Interstellar Relay Crawler
 
+# "on" 부분을 이렇게 수정합니다.
 on:
-  # 'Actions' 탭에서 수동으로 실행 가능하게 설정
+  # 'Actions' 탭에서 수동으로 실행할 수 있도록 설정
   workflow_dispatch:
     inputs:
-      # 크롤링할 URL 목록을 직접 입력받음
+      # 크롤링할 URL 목록을 직접 입력받음 (선택 사항)
       urls:
         description: 'Coupang Product URLs (comma-separated)'
-        required: true
-        
-  # 매일 아침 9시에 자동으로 실행 (UTC 0시)
-  schedule:
-    - cron: '0 0 * * *'
+        required: false
 
 jobs:
   scrape:
