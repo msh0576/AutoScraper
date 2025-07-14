@@ -10,6 +10,11 @@ on:
         description: 'Coupang Product URLs (comma-separated)'
         required: false
 
+# 👇 이 부분을 추가해 주세요.
+permissions:
+  contents: write
+
+  
 jobs:
   scrape:
     runs-on: ubuntu-latest
