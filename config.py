@@ -16,12 +16,14 @@ class Config:
     MAX_PAGES = int(os.getenv('MAX_PAGES', '2'))
     WEBHOOK_URL = os.getenv('WEBHOOK_URL', '')
     
+    
     # User-Agent 로테이션
     @staticmethod
     def get_random_user_agent():
         ua = UserAgent()
         return ua.random
     
+
     # Chrome 옵션
     @staticmethod
     def get_chrome_options():
