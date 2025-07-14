@@ -1,0 +1,63 @@
+name: Coupang Scraper
+
+on:
+  # 수동 실행
+  workflow_dispatch:
+    inputs:
+      keyword:
+        description: '검색할 상품명'
+        required: true
+        default: '나이키 에어포스'
+      max_pages:
+        description: '최대 페이지 수'
+        required: false
+        default: '2'
+      webhook_url:
+        description: 'n8n Webhook URL (선택사항)'
+        required: false
+        default: ''
+  
+  # 스케줄 실행 (매일 오전 9시)
+  schedule:
+    - cron: '0 9 * * *'
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install Chrome
+      run: |
+        wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+        sudo apt-get update
+        sudo apt-get install google-chrome-stable
+        
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Run Coupang scraper
+      env:
+        KEYWORD: ${{ github.event.inputs.keyword || '나이키 에어포스' }}
+        MAX_PAGES: ${{ github.event.inputs.max_pages || '2' }}
+        WEBHOOK_URL: ${{ github.event.inputs.webhook_url }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        python coupang_scraper.py
+        
+    - name: Upload results
+      uses: actions/upload-artifact@v3
+      with:
+        name: coupang-results
+        path: results/
+        retention-days: 30
